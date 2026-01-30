@@ -22,23 +22,22 @@
 
     local-vm = nixos-generators.nixosGenerate {
       inherit system;
-      format = "qcow2";
+      format = "qcow";
       modules = [ ./configuration.nix ];
     }; 
 
     devShells.${system}.default = pkgs.mkShell {
-      # These tools are available only inside this shell
       buildInputs = with pkgs; [
-        pulumi-bin        # The Pulumi CLI
-        kubectl           # To talk to your k3s cluster
-        kubernetes-helm   # If you use Helm charts in k3s
-        
+        pulumi-bin
+        kubectl
+        kubernetes-helm
+
         # Languages for Pulumi
         nodejs_22         
         
-        # Proxmox/Virtualization tools
         proxmox-backup-client
-        libguestfs-with-appliance # Handy for inspecting VM images locally
+        # libguestfs-with-appliance # derivation is broken on RHEL9
+                                    # with IdM
       ];
 
       shellHook = ''
@@ -46,12 +45,8 @@
         echo "Pulumi version: $(pulumi version)"
         echo "NixOS target: 25.11"
         
-        # Set Pulumi to use local state if you don't want to use their SaaS
+        # Set Pulumi to use local state
         export PULUMI_BACKEND_URL="file://$(pwd)"
-        
-        # Help text for your future self
-        alias build-template="nix build .#proxmox-template"
-        alias deploy="pulumi up"
       '';
     };
   };
