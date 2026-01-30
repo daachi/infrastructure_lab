@@ -1,0 +1,15 @@
+# build results
+result
+result-*
+
+# direnv (for nix-direnv)
+.direnv
+
+# editor settings (VSCode/IntelliJ)
+.vscode
+.idea
+*.swp
+
+# OS specific
+.DS_Store
+Thumbs.db
